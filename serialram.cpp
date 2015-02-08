@@ -119,10 +119,6 @@ void CSerialRam::read(char *buffer, uint32_t address, uint32_t size)
         size -= ((SPIFIFO_SIZE-1)*2);
     }
 
-#ifndef SERIALRAM_USENODATASWAP
-    uint16_t w;
-#endif
-
     for (; size != 2; size-=2, buffer+=2)
     {
         SPIFIFO.write16(0xFFFF, SPI_CONTINUE);

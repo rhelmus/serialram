@@ -1,3 +1,6 @@
+#ifndef SERIALRAM_H
+#define SERIALRAM_H
+
 #include "config.h"
 
 #if defined(SERIALRAM_USESPIFIFO) && (!defined(__arm__) || !defined(CORE_TEENSY))
@@ -42,3 +45,5 @@ public:
     void read(char *buffer, uint32_t address, uint32_t size);
     void write(const char *buffer, uint32_t address, uint32_t size);
 };
+
+#endif // SERIALRAM_H
