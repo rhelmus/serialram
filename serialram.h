@@ -1,5 +1,5 @@
-#ifndef SERIALRAM_H
-#define SERIALRAM_H
+#ifndef SERRAM_SERIALRAM_H
+#define SERRAM_SERIALRAM_H
 
 #include "config.h"
 
@@ -46,4 +46,4 @@ public:
     void write(const char *buffer, uint32_t address, uint32_t size);
 };
 
-#endif // SERIALRAM_H
+#endif // SERRAM_SERIALRAM_H

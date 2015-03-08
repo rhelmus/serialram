@@ -1,5 +1,5 @@
-#ifndef CONFIG_H
-#define CONFIG_H
+#ifndef SERRAM_CONFIG_H
+#define SERRAM_CONFIG_H
 
 // Use SPIFIFO on Teensy 3.X boards
 //#define SERIALRAM_USESPIFIFO
@@ -9,4 +9,4 @@
 // code
 //#define SERIALRAM_USENODATASWAP
 
-#endif // CONFIG_H
+#endif // SERRAM_CONFIG_H
