@@ -8,7 +8,8 @@
 namespace {
 
 inline uint16_t getWord(uint8_t h, uint8_t l) { return h << 8 | l; }
-inline uint16_t swapInt16(uint16_t x) { return (x >> 8) | ((x & 0xff) << 8); }
+// UNDONE: check if builtin is available (how?)
+inline uint16_t swapInt16(uint16_t x) { return __builtin_bswap16(x); /* (x >> 8) | ((x & 0xff) << 8);*/ }
 
 }
 #endif
@@ -19,7 +20,21 @@ inline uint16_t swapInt16(uint16_t x) { return (x >> 8) | ((x & 0xff) << 8); }
 
 void CSerialRam::initTransfer(EInstruction instruction)
 {
-#ifndef SERIALRAM_USESPIFIFO
+    if (SPISpeed == SPEED_FULL)
+        SPI.beginTransaction(SPISettings(F_BUS / 2, MSBFIRST, SPI_MODE0));
+    else if (SPISpeed == SPEED_HALF)
+        SPI.beginTransaction(SPISettings(F_BUS / 4, MSBFIRST, SPI_MODE0));
+    else // if (SPISpeed == SPEED_QUARTER)
+        SPI.beginTransaction(SPISettings(F_BUS / 8, MSBFIRST, SPI_MODE0));
+
+#ifdef SERIALRAM_USESPIFIFO
+    if (SPISpeed == SPEED_FULL)
+        SPIFIFO.begin(chipSelect, SPI_CLOCK_24MHz);
+    else if (SPISpeed == SPEED_HALF)
+        SPIFIFO.begin(chipSelect, SPI_CLOCK_12MHz);
+    else // if (SPISpeed == SPEED_QUARTER)
+        SPIFIFO.begin(chipSelect, SPI_CLOCK_6MHz);
+#else
     digitalWrite(chipSelect, LOW);
 #endif
 
@@ -28,6 +43,8 @@ void CSerialRam::initTransfer(EInstruction instruction)
 
 void CSerialRam::endTransfer()
 {
+    SPI.endTransaction();
+
 #ifndef SERIALRAM_USESPIFIFO
     digitalWrite(chipSelect, HIGH);
 #endif
@@ -66,27 +83,15 @@ void CSerialRam::sendAddress(uint32_t address)
 
 void CSerialRam::begin(bool la, uint8_t pin, CSerialRam::ESPISpeed speed)
 {
-    largeAddressing = la; chipSelect = pin;
+    largeAddressing = la; chipSelect = pin; SPISpeed = speed;
 
-#ifdef SERIALRAM_USESPIFIFO
-    if (speed == SPEED_FULL)
-        SPIFIFO.begin(chipSelect, SPI_CLOCK_24MHz);
-    else if (speed == SPEED_HALF)
-        SPIFIFO.begin(chipSelect, SPI_CLOCK_12MHz);
-    else if (speed == SPEED_QUARTER)
-        SPIFIFO.begin(chipSelect, SPI_CLOCK_6MHz);
-#else
     SPI.begin();
-    if (speed == SPEED_FULL)
-        SPI.setClockDivider(SPI_CLOCK_DIV2);
-    else if (speed == SPEED_HALF)
-        SPI.setClockDivider(SPI_CLOCK_DIV4);
-    else if (speed == SPEED_QUARTER)
-        SPI.setClockDivider(SPI_CLOCK_DIV8);
 
+#ifndef SERIALRAM_USESPIFIFO
     pinMode(chipSelect, OUTPUT);
     digitalWrite(chipSelect, HIGH);
 #endif
+
     // default to sequential mode
     initTransfer(INSTR_WRMR);
     sendByteNoMore(SEQUENTIAL_MODE);

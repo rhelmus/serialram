@@ -3,12 +3,18 @@
 
 #include "config.h"
 
+#include <SPI.h>
+
 #if defined(SERIALRAM_USESPIFIFO) && (!defined(__arm__) || !defined(CORE_TEENSY))
 #undef SERIALRAM_USESPIFIFO // only do SPIFIFO on teensy arm boards
 #endif
 
 class CSerialRam
 {
+public:
+    enum ESPISpeed { SPEED_FULL, SPEED_HALF, SPEED_QUARTER };
+
+private:
     enum EInstruction
     {
         INSTR_READ = 0x03,
@@ -29,6 +35,7 @@ class CSerialRam
 
     bool largeAddressing;
     uint8_t chipSelect;
+    ESPISpeed SPISpeed;
 
     void initTransfer(EInstruction instruction);
     void endTransfer(void);
@@ -37,8 +44,6 @@ class CSerialRam
     void sendAddress(uint32_t address);
 
 public:
-    enum ESPISpeed { SPEED_FULL, SPEED_HALF, SPEED_QUARTER };
-
     void begin(bool la, uint8_t pin, ESPISpeed speed);
     void end(void) { }
 
