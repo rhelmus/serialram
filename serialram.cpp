@@ -8,8 +8,16 @@
 namespace {
 
 inline uint16_t getWord(uint8_t h, uint8_t l) { return h << 8 | l; }
-// UNDONE: check if builtin is available (how?)
-inline uint16_t swapInt16(uint16_t x) { return __builtin_bswap16(x); /* (x >> 8) | ((x & 0xff) << 8);*/ }
+
+// recent teensyduino version supports toolchain with __builtin_bswap16
+// to test a recent version we just look at the gcc version
+#define GCC_VERSION (__GNUC__ * 10000 + __GNUC_MINOR__ * 100 + __GNUC_PATCHLEVEL__)
+#if GCC_VERSION >= 40800
+inline uint16_t swapInt16(uint16_t x) { return __builtin_bswap16(x); }
+#else
+inline uint16_t swapInt16(uint16_t x) { return (x >> 8) | ((x & 0xff) << 8); }
+#endif
+#undef GCC_VERSION
 
 }
 #endif
@@ -20,12 +28,21 @@ inline uint16_t swapInt16(uint16_t x) { return __builtin_bswap16(x); /* (x >> 8)
 
 void CSerialRam::initTransfer(EInstruction instruction)
 {
+#if defined(__arm__) && defined(CORE_TEENSY)
     if (SPISpeed == SPEED_FULL)
         SPI.beginTransaction(SPISettings(F_BUS / 2, MSBFIRST, SPI_MODE0));
     else if (SPISpeed == SPEED_HALF)
         SPI.beginTransaction(SPISettings(F_BUS / 4, MSBFIRST, SPI_MODE0));
     else // if (SPISpeed == SPEED_QUARTER)
         SPI.beginTransaction(SPISettings(F_BUS / 8, MSBFIRST, SPI_MODE0));
+#else
+    if (SPISpeed == SPEED_FULL)
+        SPI.beginTransaction(SPISettings(F_CPU / 2, MSBFIRST, SPI_MODE0));
+    else if (SPISpeed == SPEED_HALF)
+        SPI.beginTransaction(SPISettings(F_CPU / 4, MSBFIRST, SPI_MODE0));
+    else // if (SPISpeed == SPEED_QUARTER)
+        SPI.beginTransaction(SPISettings(F_CPU / 8, MSBFIRST, SPI_MODE0));
+#endif
 
 #ifdef SERIALRAM_USESPIFIFO
     if (SPISpeed == SPEED_FULL)
