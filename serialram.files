@@ -3,3 +3,4 @@ serialram.h
 examples/test.ino
 examples/test/test.ino
 config.h
+README.md
