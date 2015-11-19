@@ -3,7 +3,7 @@
 #include <serialram.h>
 
 // config
-const uint16_t bufSize = 4096;
+const uint16_t bufSize = 4096; // May want to change this!
 const uint8_t IORepeats = 128;
 const bool largeAddressing = true; // true for chips > 512 kbit
 const uint8_t chipSelect = 9;
