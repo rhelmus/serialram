@@ -45,7 +45,7 @@ private:
 
 public:
     void begin(bool la, uint8_t pin, ESPISpeed speed);
-    void end(void) { }
+    void end(void) { } // UNDONE(?)
 
     void read(char *buffer, uint32_t address, uint32_t size);
     void write(const char *buffer, uint32_t address, uint32_t size);
