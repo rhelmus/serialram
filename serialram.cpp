@@ -60,11 +60,11 @@ void CSerialRam::initTransfer(EInstruction instruction)
 
 void CSerialRam::endTransfer()
 {
-    SPI.endTransaction();
-
 #ifndef SERIALRAM_USESPIFIFO
     digitalWrite(chipSelect, HIGH);
 #endif
+
+    SPI.endTransaction();
 }
 
 uint8_t CSerialRam::sendByteMore(uint8_t byte)
