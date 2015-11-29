@@ -6,19 +6,24 @@
 const uint16_t bufSize = 4096; // May want to change this!
 const uint8_t IORepeats = 128;
 const bool largeAddressing = true; // true for chips > 512 kbit
-const uint8_t chipSelect = 9;
+const uint8_t chipSelect = 10;
 const CSerialRam::ESPISpeed SPISpeed = CSerialRam::SPEED_FULL;
 
 CSerialRam serialRam;
 
 void setup()
 {
+    pinMode(9, OUTPUT); digitalWrite(9, HIGH);
+    pinMode(10, OUTPUT); digitalWrite(10, HIGH);
+
+    serialRam.begin(largeAddressing, chipSelect, SPISpeed);
+    
     Serial.begin(9600);
     while (!Serial)
         ;
 
     delay(3000);
-    serialRam.begin(largeAddressing, chipSelect, SPISpeed);
+
     Serial.println("Initialized");
 }
 
@@ -58,5 +63,5 @@ void loop()
     if (ok)
         Serial.println("All OK!");
 
-    delay(10000);
+    delay(5000);
 }
