@@ -26,7 +26,7 @@ inline uint16_t swapInt16(uint16_t x) { return (x >> 8) | ((x & 0xff) << 8); }
 #include <SPI.h>
 #endif
 
-void CSerialRam::initTransfer(EInstruction instruction)
+void SerialRam::initTransfer(EInstruction instruction)
 {
 #if defined(__arm__) && defined(CORE_TEENSY)
     if (SPISpeed == SPEED_FULL)
@@ -58,7 +58,7 @@ void CSerialRam::initTransfer(EInstruction instruction)
     sendByteMore(instruction);
 }
 
-void CSerialRam::endTransfer()
+void SerialRam::endTransfer()
 {
 #ifndef SERIALRAM_USESPIFIFO
     digitalWrite(chipSelect, HIGH);
@@ -67,7 +67,7 @@ void CSerialRam::endTransfer()
     SPI.endTransaction();
 }
 
-uint8_t CSerialRam::sendByteMore(uint8_t byte)
+uint8_t SerialRam::sendByteMore(uint8_t byte)
 {
 #ifdef SERIALRAM_USESPIFIFO
     SPIFIFO.write(byte, SPI_CONTINUE);
@@ -77,7 +77,7 @@ uint8_t CSerialRam::sendByteMore(uint8_t byte)
 #endif
 }
 
-uint8_t CSerialRam::sendByteNoMore(uint8_t byte)
+uint8_t SerialRam::sendByteNoMore(uint8_t byte)
 {
 #ifdef SERIALRAM_USESPIFIFO
     SPIFIFO.write(byte, 0);
@@ -90,7 +90,7 @@ uint8_t CSerialRam::sendByteNoMore(uint8_t byte)
     return ret;
 }
 
-void CSerialRam::sendAddress(uint32_t address)
+void SerialRam::sendAddress(uint32_t address)
 {
     if (largeAddressing)
         sendByteMore((uint8_t)(address >> 16));
@@ -98,7 +98,7 @@ void CSerialRam::sendAddress(uint32_t address)
     sendByteMore((uint8_t)address);
 }
 
-void CSerialRam::begin(bool la, uint8_t pin, CSerialRam::ESPISpeed speed)
+void SerialRam::begin(bool la, uint8_t pin, SerialRam::ESPISpeed speed)
 {
     largeAddressing = la; chipSelect = pin; SPISpeed = speed;
 
@@ -114,7 +114,7 @@ void CSerialRam::begin(bool la, uint8_t pin, CSerialRam::ESPISpeed speed)
     sendByteNoMore(SEQUENTIAL_MODE);
 }
 
-void CSerialRam::read(char *buffer, uint32_t address, uint32_t size)
+void SerialRam::read(char *buffer, uint32_t address, uint32_t size)
 {
     initTransfer(INSTR_READ);
     sendAddress(address);
@@ -179,7 +179,7 @@ void CSerialRam::read(char *buffer, uint32_t address, uint32_t size)
 #endif
 }
 
-void CSerialRam::write(const char *buffer, uint32_t address, uint32_t size)
+void SerialRam::write(const char *buffer, uint32_t address, uint32_t size)
 {
     initTransfer(INSTR_WRITE);
     sendAddress(address);

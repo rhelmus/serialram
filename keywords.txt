@@ -1,1 +1,1 @@
-CSerialRam	KEYWORD1
+SerialRam	KEYWORD1

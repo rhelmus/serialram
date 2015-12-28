@@ -7,10 +7,10 @@ const uint16_t bufSize = 128;
 const bool largeAddressing = true; // true for chips > 512 kbit
 const uint8_t chipSelect = 9;
 
-// Speed options: CSerialRam::SPEED_FULL, CSerialRam::SPEED_HALVE and CSerialRam::SPEED_QUARTER
-const CSerialRam::ESPISpeed SPISpeed = CSerialRam::SPEED_FULL;
+// Speed options: SerialRam::SPEED_FULL, SerialRam::SPEED_HALVE and SerialRam::SPEED_QUARTER
+const SerialRam::ESPISpeed SPISpeed = SerialRam::SPEED_FULL;
 
-CSerialRam serialRam;
+SerialRam serialRam;
 
 void setup()
 {

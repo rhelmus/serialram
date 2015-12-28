@@ -9,7 +9,7 @@
 #undef SERIALRAM_USESPIFIFO // only do SPIFIFO on teensy arm boards
 #endif
 
-class CSerialRam
+class SerialRam
 {
 public:
     enum ESPISpeed { SPEED_FULL, SPEED_HALF, SPEED_QUARTER };
