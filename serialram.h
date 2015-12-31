@@ -26,11 +26,7 @@ private:
     enum
     {
         SEQUENTIAL_MODE = 0x40,
-#if defined(__MK20DX128__)
         SPIFIFO_SIZE = 4
-#elif defined(__MK20DX256__)
-        SPIFIFO_SIZE = 8
-#endif
     };
 
     bool largeAddressing;
